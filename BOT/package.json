@@ -11,9 +11,11 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@serialport/parser-readline": "^13.0.0",
     "dgram": "^1.0.1",
     "dotenv": "^17.2.3",
     "fs": "^0.0.1-security",
+    "serialport": "^13.0.0",
     "telegram-bot-api": "^2.0.1"
   }
 }
