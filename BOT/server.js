@@ -1,49 +1,46 @@
 const TelegramBot = require('node-telegram-bot-api'); //including node-library
 require("dotenv").config();     
 const fs = require("fs");
-const dgram = require("dgram");
 const {SerialPort} = require("serialport");
 const {ReadlineParser} = require("@serialport/parser-readline");
-
+const generateChart = require("./chart");
 const token = process.env.BOT_API; //Telegram API
 const bot = new TelegramBot(token, {polling: true});
 const file = fs.readFileSync("chatId.json").toString();
-let chatID = JSON.parse(file).chatId;
+let chatID = JSON.parse(file).chatID; //getting chatId
 
-// PLAN A\
-/*
-const PORT = 5000;
-const server = dgram.createSocket("udp4");
-server.on('message', (msg) => { //getting data by UDP
-    console.log(`${msg}`); //checking if data is received
-    const data = msg.toString(); //saving data
-    if(chatID && data) {
-    bot.sendMessage(chatID,data);
+class Weather {
+    constructor(temp, humidity) {
+        this.temp = temp;
+        this.humidity = humidity;
+    }
 }
-});
 
-server.bind(PORT); 
-*///initting udp connection on port 5000
-// Plan B
-const port = new SerialPort({
-    path:"/dev/ttyACM0",
-    baudRate: 115200,
-});
+const statistic = [];
+statistic.push(new Weather(20, 50));
+statistic.push(new Weather(30, 40));
+statistic.push(new Weather(35, 60));
+statistic.push(new Weather(33, 20));
+statistic.push(new Weather(32, 70));
+statistic.push(new Weather(18, 80));
+statistic.push(new Weather(10, 10));
+statistic.push(new Weather(15, 5));
+const pattern = /^\s*\d+(\.\d+)?\s*,\s*\d+(\.\d+)?\s*$/; //pattern for "a, b" numbers type
+const patternForNumber = /^\s*\d+(\.\d+)?\s*$/; //pattern for signle number
+let time = 10000; //time
 
-const parser = port.pipe(new ReadlineParser({delimiter: "\n"}));
-
-parser.on("data", (msg) => {
-    if(!msg.trim()) return;
-    console.log(`${msg}`); //checking if data is received
-    const data = msg.toString(); //saving data
-    if(chatID && data) {
-    bot.sendMessage(chatID,data);
+//drawing statistic
+async function getStatistic() {
+    const imgBuffer = await generateChart(statistic);
+    bot.sendPhoto(chatID, imgBuffer);
 }
-})
 
+// sending statistic every time interval
+setInterval(getStatistic, time);
+
+//getting user's chatID, in case it is empty.
 bot.on('message', (msg) => {
     console.log("Message is received");
     chatID = msg.chat.id;
     fs.writeFileSync("chatId.json", JSON.stringify({chatID}));
 });
-
