@@ -1,92 +1,123 @@
 #include "pico/stdlib.h"
 #include <stdio.h>
-#include "pico/cyw43_arch.h"
-#include "lwip/pbuf.h"
-#include "lwip/udp.h"
-#include "lwip/ip_addr.h"
 #include <string.h>
 #include "pico/time.h"
 #include <stdbool.h>
 #include <stdlib.h>
-#define WIFI_SSID "NAME" // Name of WIFI
-#define WIFI_PASS "PASSWORD" // password
-#define TARGET_IP "IP"//ip adress of device, that will get data
-#define PORT 5000
-#define SEONSOR1 15
+#include "hardware/uart.h"
+#define ECHO 15
+#define TRIGGER 14
+#define DISTANCE_CM 50
+#define UART_ID uart0
+#define UART_TX 0
+#define UART_RX 1
 uint64_t time_user_is_sitting(uint64_t target_time) {
-static bool user_is_sitting = false; 
-static uint64_t start_time = 0;
-static uint64_t last_change = 0; //time of the last change of state(used for fixing bugs, for example if user removes hand from the table pretty fast, sensor will not react)
-bool sensor_act = (gpio_get(SEONSOR1) == 0); // getting current state of sensor, gets true if sensor  see user
-uint64_t current_time = time_us_64();  //getting current time
-if(sensor_act != user_is_sitting) { //if sensor sees user but, user is not, or user is sitting but sensor does not see
-    if(current_time - last_change >= 20000) { // removing random occurances (debouce)
+    static bool user_is_sitting = false; 
+    static uint64_t start_time = 0;
+    static uint64_t lost_time = 0;
+    uint64_t current_time = time_us_64();  
 
+    gpio_put(TRIGGER, 1);
+    sleep_us(10);
+    gpio_put(TRIGGER, 0);
 
-        if(!sensor_act && user_is_sitting) { // first case
-            user_is_sitting = false; // it means that user has standed up
-            uint64_t duration = current_time - start_time; //calculating duration
-            last_change = current_time;
-            return duration / 60000000;
+    while(gpio_get(ECHO) == 0) tight_loop_contents();
+    uint64_t time1 = time_us_64();
+    while(gpio_get(ECHO) == 1) tight_loop_contents();
+    uint64_t time2 = time_us_64();
+
+    float distance_cm = ((time2 - time1) / 2.0) * 0.0343;
+    bool sensor_act = distance_cm < DISTANCE_CM;
+
+    if(!sensor_act && user_is_sitting) { 
+        if(lost_time == 0) lost_time = current_time;
+        if(current_time - lost_time < 500000) {
+            printf("[INFO] Temporary lost signal, ignoring\n");
+            return 0;
         }
-        if(sensor_act && !user_is_sitting) { //second case
-            user_is_sitting = true; //it means user was standing and now sitted
-            start_time = current_time;
-            last_change = current_time; // updating last change
-        }
-        
+
+        user_is_sitting = false;
+        uint64_t duration = current_time - start_time; 
+        lost_time = 0;
+        printf("[STATE] User stand, user was sitting for %llu\n", duration / 1000000);
+        return duration / 1000000;
     }
-    
-}
-if(user_is_sitting && current_time - start_time >= target_time) { // if user is sitting equal or more that is stated in settings
-    user_is_sitting = false;
-    uint64_t duration = current_time - start_time;
-    last_change = current_time;
-    return duration / 60000000;
-}
-return 0;
+
+    if(sensor_act && !user_is_sitting) { 
+        user_is_sitting = true;
+        start_time = current_time;
+        lost_time = 0;
+        printf("[STATE] User sitted\n");
+        return 0;
+    }
+
+    if(sensor_act) {
+        lost_time = 0;
+        printf("[INFO] User is still sitting, distance is %.1f cm\n", distance_cm);
+    }
+
+    if(user_is_sitting && current_time - start_time >= target_time) {
+        user_is_sitting = false;
+        uint64_t duration = current_time - start_time;
+        printf("[STATE] Достигнут target_time! Сидел %llu секунд\n", duration / 1000000);
+        return duration / 1000000;
+    }
+    return 0;
 }
 
+
+/*void input(void) {
+    static char buf[20];
+    static int index = 0;
+
+    while(uart_is_readable(UART_ID)) {
+        int c = uart_getc(UART_ID);
+        if(c=='\n') {
+            buf[index] = '\0';
+            if(index > 0) {
+                    printf("[UART] %s\n", buf);
+            }
+            index = 0;
+        } else {
+            if(index < (int) sizeof(buf) - 1) buf[index++] = (char) c;
+            else index = 0;
+        }
+    }
+
+}
+    */
 int main(void) {
     stdio_init_all();  
-    gpio_init(SEONSOR1);
-    gpio_set_dir(SEONSOR1, GPIO_IN);
 
-    uint64_t target = 1000000;
-    if(cyw43_arch_init()) {     //initting wifi module of pico, returns 1 if error
-        printf("Wifi init failed\n");
-        return 1;
-    }
-    cyw43_arch_enable_sta_mode(); //enabling pico as a client
-    printf("Connecting to WIFI ...\n");
+    sleep_ms(4000);
+    puts("CONNECTED");
+    uart_init(uart0, 115200);
+    gpio_set_function(0, GPIO_FUNC_UART); //TX
+    gpio_set_function(1, GPIO_FUNC_UART);
+    gpio_init(TRIGGER);
+    gpio_set_dir(TRIGGER, GPIO_OUT);
 
-    if(cyw43_arch_connect_timeout_ms(WIFI_SSID, WIFI_PASS, CYW43_AUTH_WPA2_AES_PSK, 20000)) { //trying to connect to wifi, returns 1 if error
-        printf("Error connecting to WIFI\n");
-        return 1;
-    }
-    printf("Successfully connected to WIFI!\n");
-    static struct udp_pcb * pcb; //initting new udp package
-    pcb = udp_new();
-    if(!pcb) {
-        printf("UDP new method has failed\n");
-        return 1;
-    }
-
-    static ip_addr_t addr;
-    ipaddr_aton(TARGET_IP, &addr); //setting addr to target ip address
-
+    gpio_init(ECHO);
+    gpio_set_dir(ECHO, GPIO_IN);
+           char buf[100];
         for(;;) {
-            uint64_t time_user_sit = time_user_is_sitting(target);
-        if(time_user_sit > 0) {
-        printf("User is sitting for %llu minutes\n", time_user_sit);
-    } 
-            const char *msg = "TEST";
-            struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, strlen(msg), PBUF_RAM); //allocating data
-            memcpy(p->payload, msg, strlen(msg)); //copying data
-            udp_sendto(pcb, p, &addr, PORT); //sending upd package
-            pbuf_free(p);   //freeing p pointer after pbuf_alloc
-
-            printf("Data has been sent by UDP!\n");
-            sleep_ms(1000); 
+            int i = 1;
+            int c = uart_getc(uart0);
+        int index = 0;
+        while(c != '\n' && c != '\r' && index != 100){
+            buf[index++] = c;
+            c = uart_getc(uart0);
         }
-}
+        buf[index] = '\0';
+        fflush(stdout);
+        printf("%s\n", buf);
+            uint64_t time_user_sit = time_user_is_sitting(10000000);
+        if(time_user_sit > 0) {
+        printf("User is sitting for %llu seconds\n", time_user_sit);
+        
+
+        }
+
+    sleep_ms(100); 
+        }
+    }

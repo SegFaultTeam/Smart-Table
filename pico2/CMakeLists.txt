@@ -39,9 +39,7 @@ target_link_libraries(${PROJECT}
     hardware_adc
     pico_rand
     hardware_pio
-    pico_cyw43_arch
-    pico_lwip_arch
-    pico_cyw43_driver
+
 )
 
 pico_add_extra_outputs(${PROJECT})

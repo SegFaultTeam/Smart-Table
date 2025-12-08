@@ -1,0 +1,2 @@
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/_deps/picotool-build/enc_bootloader/CMakeFiles/edit_cache.dir
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/_deps/picotool-build/enc_bootloader/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,14 @@
+# Target labels
+ picotoolBuild
+# Source files and their labels
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/CMakeFiles/picotoolBuild
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/CMakeFiles/picotoolBuild.rule
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/CMakeFiles/picotoolBuild-complete.rule
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/picotool/src/picotoolBuild-stamp/picotoolBuild-build.rule
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/picotool/src/picotoolBuild-stamp/picotoolBuild-configure.rule
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/picotool/src/picotoolBuild-stamp/picotoolBuild-download.rule
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/picotool/src/picotoolBuild-stamp/picotoolBuild-install.rule
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/picotool/src/picotoolBuild-stamp/picotoolBuild-mkdir.rule
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/picotool/src/picotoolBuild-stamp/picotoolBuild-patch.rule
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/picotool/src/picotoolBuild-stamp/picotoolBuild-test.rule
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/picotool/src/picotoolBuild-stamp/picotoolBuild-update.rule

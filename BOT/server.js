@@ -10,7 +10,8 @@ const bot = new TelegramBot(token, {polling: true});
 const file = fs.readFileSync("chatId.json").toString();
 let chatID = JSON.parse(file).chatId;
 
-// PLAN A
+// PLAN A\
+/*
 const PORT = 5000;
 const server = dgram.createSocket("udp4");
 server.on('message', (msg) => { //getting data by UDP
@@ -21,7 +22,8 @@ server.on('message', (msg) => { //getting data by UDP
 }
 });
 
-server.bind(PORT); //initting udp connection on port 5000
+server.bind(PORT); 
+*///initting udp connection on port 5000
 // Plan B
 const port = new SerialPort({
     path:"/dev/ttyACM0",

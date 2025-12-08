@@ -1,0 +1,5 @@
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/pioasm-install/pioasm/pioasm
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/pioasm-install/pioasm/pioasmTargets.cmake
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/pioasm-install/pioasm/pioasmTargets-release.cmake
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/pioasm-install/pioasm/pioasmConfig.cmake
+/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/pioasm-install/pioasm/pioasmConfigVersion.cmake

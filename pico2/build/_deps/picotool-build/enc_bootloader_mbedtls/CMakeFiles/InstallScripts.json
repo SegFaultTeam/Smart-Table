@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/build/_deps/picotool-build/enc_bootloader_mbedtls/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
