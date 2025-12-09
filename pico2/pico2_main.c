@@ -79,8 +79,9 @@ int main(void) {
     gpio_init(ECHO);
     gpio_set_dir(ECHO, GPIO_IN);
            char buf[100];
+           bool started = false;
+           uint64_t target_time = 0;
         for(;;) {
-            int i = 1;
             int c = uart_getc(uart0);
         int index = 0;
         while(c != '\n' && c != '\r' && index != 100){
@@ -88,9 +89,17 @@ int main(void) {
             c = uart_getc(uart0);
         }
         buf[index] = '\0';
+        if(!started) {
+        if(strlen(buf) > 3) continue;
+        else {
+            started = true;
+            target_time = atoi(buf);
+            printf("%d", target_time);
+        } 
+    }
         fflush(stdout);
         printf("%s\n", buf);
-            uint64_t time_user_sit = time_user_is_sitting(10000000);
+            uint64_t time_user_sit = time_user_is_sitting(target_time);
         if(time_user_sit > 0) {
         printf("User is sitting for %llu seconds\n", time_user_sit);
         
