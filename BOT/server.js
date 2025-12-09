@@ -8,26 +8,41 @@ const token = process.env.BOT_API; //Telegram API
 const bot = new TelegramBot(token, {polling: true});
 const file = fs.readFileSync("chatId.json").toString();
 let chatID = JSON.parse(file).chatID; //getting chatId
-
+let time = 0; //time
+const statistic = [];
+const pattern = /^\s*\d+(\.\d+)?\s*,\s*\d+(\.\d+)?\s*$/; //pattern for "a, b" numbers type
+const patternForNumber = /^\s*\d+(\.\d+)?\s*$/; //pattern for signle number
+let started = false;
 class Weather {
     constructor(temp, humidity) {
         this.temp = temp;
         this.humidity = humidity;
     }
 }
+const port = new SerialPort({
+    path:"/dev/ttyACM0",
+    baudRate: 115200,
+});
 
-const statistic = [];
-statistic.push(new Weather(20, 50));
-statistic.push(new Weather(30, 40));
-statistic.push(new Weather(35, 60));
-statistic.push(new Weather(33, 20));
-statistic.push(new Weather(32, 70));
-statistic.push(new Weather(18, 80));
-statistic.push(new Weather(10, 10));
-statistic.push(new Weather(15, 5));
-const pattern = /^\s*\d+(\.\d+)?\s*,\s*\d+(\.\d+)?\s*$/; //pattern for "a, b" numbers type
-const patternForNumber = /^\s*\d+(\.\d+)?\s*$/; //pattern for signle number
-let time = 10000; //time
+const parser = port.pipe(new ReadlineParser({delimiter: "\n"}));
+parser.on("data", (msg) => {
+    if(!msg.trim()) return;
+    console.log(`${msg}`); //checking if data is received
+    const data = msg.toString(); //saving data
+    if(patternForNumber.test(data)) {
+        time = Number(data) * 1000;
+        started = true;
+        return;
+    }
+   else if(pattern.test(data)) {
+        const [a,b] = data.split(",").map(num => Number(num.trim()));
+        statistic.push(new Weather(a ,b));
+    }
+    if(chatID && data) {
+    bot.sendMessage(chatID,data);
+    }
+});
+
 
 //drawing statistic
 async function getStatistic() {
@@ -36,7 +51,9 @@ async function getStatistic() {
 }
 
 // sending statistic every time interval
+if(started) {
 setInterval(getStatistic, time);
+}
 
 //getting user's chatID, in case it is empty.
 bot.on('message', (msg) => {
