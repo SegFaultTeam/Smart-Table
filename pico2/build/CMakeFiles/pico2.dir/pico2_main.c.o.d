@@ -75,4 +75,4 @@ CMakeFiles/pico2.dir/pico2_main.c.o: \
  /usr/arm-none-eabi/include/sys/string.h \
  /usr/arm-none-eabi/include/stdlib.h \
  /usr/arm-none-eabi/include/machine/stdlib.h \
- /usr/arm-none-eabi/include/alloca.h
+ /usr/arm-none-eabi/include/alloca.h /usr/arm-none-eabi/include/ctype.h

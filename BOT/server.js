@@ -10,7 +10,7 @@ const file = fs.readFileSync("chatId.json").toString();
 let chatID = JSON.parse(file).chatID; //getting chatId
 let time = 0; //time
 const statistic = [];
-const pattern = /^\s*\d+(\.\d+)?\s*,\s*\d+(\.\d+)?\s*$/; //pattern for "a, b" numbers type
+const pattern = /^\s*\d+(\.\d+)?\s+\d+(\.\d+)?\s*$/; //pattern for "a, b" numbers type
 const patternForNumber = /^\s*\d+(\.\d+)?\s*$/; //pattern for signle number
 let started = false;
 class Weather {
@@ -28,14 +28,19 @@ const parser = port.pipe(new ReadlineParser({delimiter: "\n"}));
 parser.on("data", (msg) => {
     if(!msg.trim()) return;
     console.log(`${msg}`); //checking if data is received
-    const data = msg.toString(); //saving data
+    const data = msg.toString().trim(); //saving data
     if(patternForNumber.test(data)) {
         time = Number(data) * 1000;
+        console.log("TIME IS ", time);
+        if(!started) {
         started = true;
+        setInterval(getStatistic, time);
+        }
         return;
     }
    else if(pattern.test(data)) {
-        const [a,b] = data.split(",").map(num => Number(num.trim()));
+        const [a,b] = data.trim().split(/\s+/).map(num => Number(num.trim()));
+        console.log(b, a);
         statistic.push(new Weather(a ,b));
     }
     if(chatID && data) {
@@ -46,6 +51,7 @@ parser.on("data", (msg) => {
 
 //drawing statistic
 async function getStatistic() {
+    console.log("Drawing ...", statistic);
     const imgBuffer = await generateChart(statistic);
     bot.sendPhoto(chatID, imgBuffer);
 }

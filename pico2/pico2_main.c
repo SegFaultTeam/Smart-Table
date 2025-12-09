@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "hardware/uart.h"
+#include <ctype.h>
 #define ECHO 15
 #define TRIGGER 14
 #define DISTANCE_CM 50 //target distance, can be changed.
@@ -31,7 +32,7 @@ uint64_t time_user_is_sitting(uint64_t target_time) { //function that returns ti
 
     if(!sensor_act && user_is_sitting) {  //first case
         if(lost_time == 0) lost_time = current_time; //updating lost time
-        if(current_time - lost_time < 500000) { //giving 0.5s as temporary lost signal, if user returns in range, time will not stop
+        if(current_time - lost_time < 100000) { //giving 0.5s as temporary lost signal, if user returns in range, time will not stop
             printf("[INFO] Temporary lost signal, ignoring\n");
             return 0;
         }
@@ -45,6 +46,7 @@ uint64_t time_user_is_sitting(uint64_t target_time) { //function that returns ti
 
     if(sensor_act && !user_is_sitting) {  //second case, if user was standing and now sitted
         user_is_sitting = true; //updating state
+        start_time = current_time;
         lost_time = 0; //resetting lost time
         printf("[STATE] User sitted\n");
         return 0;
@@ -82,7 +84,9 @@ int main(void) {
            bool started = false;
            uint64_t target_time = 0;
         for(;;) {
+            fflush(stdout);
             int c = uart_getc(uart0);
+            if(c < 0) continue;
         int index = 0;
         while(c != '\n' && c != '\r' && index != 100){
             buf[index++] = c;
@@ -90,15 +94,26 @@ int main(void) {
         }
         buf[index] = '\0';
         if(!started) {
-        if(strlen(buf) > 3) continue;
+        if((strlen(buf) > 4 || strlen(buf) == 0) && !isdigit(buf[0])) continue;
         else {
             started = true;
-            target_time = atoi(buf);
-            printf("%d", target_time);
+            buf[strcspn(buf, "\n")] ='\0';
+            int pos = 0;
+            for(int j = 0; buf[j]; j++) {
+                if(isdigit(buf[j])) {
+                    buf[pos] = buf[j];
+                    pos++;
+                }
+            }
+            buf[pos] = '\0';
+            target_time = 1000000 * (uint64_t) atoi(buf);
+            fflush(stdout);
+            printf("%s\n", buf);
+            continue;
         } 
     }
         fflush(stdout);
-        printf("%s\n", buf);
+        printf("%s\n", buf[0] == 'D' ? "DHT sensor is not responding":  buf);
             uint64_t time_user_sit = time_user_is_sitting(target_time);
         if(time_user_sit > 0) {
         printf("User is sitting for %llu seconds\n", time_user_sit);

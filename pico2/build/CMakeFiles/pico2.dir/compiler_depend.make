@@ -3802,6 +3802,7 @@ CMakeFiles/pico2.dir/pico2_main.c.o: /home/karl/Desktop/projects/C/Embedded_proj
   /usr/arm-none-eabi/include/_newlib_version.h \
   /usr/arm-none-eabi/include/alloca.h \
   /usr/arm-none-eabi/include/assert.h \
+  /usr/arm-none-eabi/include/ctype.h \
   /usr/arm-none-eabi/include/machine/_default_types.h \
   /usr/arm-none-eabi/include/machine/_types.h \
   /usr/arm-none-eabi/include/machine/ieeefp.h \
@@ -4248,6 +4249,8 @@ generated/pico_base/pico/config_autogen.h:
 /home/karl/pico/pico-sdk/src/common/pico_util/include/pico/util/queue.h:
 
 /home/karl/pico/pico-sdk/src/rp2_common/hardware_vreg/include/hardware/vreg.h:
+
+/usr/arm-none-eabi/include/ctype.h:
 
 /home/karl/pico/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/nvic.h:
 
