@@ -149,10 +149,19 @@ int main() {
             pwm_set_gpio_level(PWM_PIN, difference);
             display_status(temperature_c, humidity, difference);
         } else if(result == DHT_RESULT_TIMEOUT){
-            uart_putc(uart0, 'D'); //code error for pico check wiring
+            uart_puts(uart0, "D\n"); //code error for pico check wiring
+            ssd1306_clear(&disp);
+            ssd1306_draw_string(&disp, 5, 5, 1, "DHT sensor");
+            ssd1306_draw_string(&disp, 5, 15, 1, "not responding");
+            ssd1306_draw_string(&disp, 5, 25, 1, "Please check");
+            ssd1306_draw_string(&disp, 5, 35, 1, "your wiring.");
+            ssd1306_show(&disp);
         } else {
             assert(result == DHT_RESULT_BAD_CHECKSUM);
-            uart_putc(uart0, 'B'); //code error for pico bad checksum
+            uart_puts(uart0, "B\n"); //code error for pico bad checksum
+            ssd1306_clear(&disp);
+            ssd1306_draw_string(&disp, 5, 10, 1, "Bad Checksum.");
+            ssd1306_show(&disp);
         }
         
         sleep_ms(2000);
