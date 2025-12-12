@@ -38,7 +38,7 @@ add_compile_options(-Wall -Wno-format -Wno-unused-function -Wno-maybe-uninitiali
 file(GLOB SOURCES "*.h" "*.c")
 add_executable(${PROJECT} ${SOURCES})
 
-target_link_libraries(${PROJECT} pico_stdlib hardware_pwm hardware_adc pico_rand hardware_pio dht)
+target_link_libraries(${PROJECT} pico_stdlib hardware_pwm hardware_adc pico_rand hardware_pio dht hardware_i2c)
 pico_add_extra_outputs(${PROJECT})
 
 pico_enable_stdio_usb(${PROJECT} 1)
