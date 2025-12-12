@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "hardware/uart.h"
+#include "hardware/pwm.h"
 #include <ctype.h>
 #define ECHO 15
 #define TRIGGER 14
@@ -12,6 +13,40 @@
 #define UART_ID uart0
 #define UART_TX 0
 #define UART_RX 1
+#define BUZZER 13
+void signal(uint freq, uint duration_ms) {
+if(freq == 0) {
+    sleep_ms(duration_ms);
+    return;
+}
+    uint slice = pwm_gpio_to_slice_num(BUZZER);
+    float clk_div = 4.0f;
+    pwm_set_clkdiv(slice, clk_div);
+    
+    uint wrap = (uint)(125000000 / (clk_div * freq)) - 1;;
+    if(wrap < 1) wrap = 1;
+    pwm_set_wrap(slice, wrap);
+     pwm_set_gpio_level(BUZZER, wrap / 2);
+     sleep_ms(duration_ms);  
+     pwm_set_gpio_level(BUZZER, 0);
+    }
+
+void music(void) {
+     const uint melody[] = {
+        440,440,440,349,523,440,349,523,440, // TA-TA-TA-TA-TA
+        659,659,659,698,523,415,349,523,440
+    };
+
+    const uint durations[] = {
+        500,500,500,350,150,500,350,150,650,
+        500,500,500,350,150,500,350,150,650
+    };
+    for(int i = 0; i < sizeof(melody) / sizeof(melody[0]); i++) {
+        signal(melody[i], durations[i]);
+        sleep_ms(30);
+    }
+}
+
 uint64_t time_user_is_sitting(uint64_t target_time) { //function that returns time that user was sitting
     static bool user_is_sitting = false; //state init
     static uint64_t start_time = 0; //start time initting
@@ -33,34 +68,35 @@ uint64_t time_user_is_sitting(uint64_t target_time) { //function that returns ti
     if(!sensor_act && user_is_sitting) {  //first case
         if(lost_time == 0) lost_time = current_time; //updating lost time
         if(current_time - lost_time < 100000) { //giving 0.5s as temporary lost signal, if user returns in range, time will not stop
-            printf("[INFO] Temporary lost signal, ignoring\n");
+            //printf("[INFO] Temporary lost signal, ignoring\n");
             return 0;
         }
 
         user_is_sitting = false;
         uint64_t duration = current_time - start_time;  //calculating duration
         lost_time = 0; //updating lost time
-        printf("[STATE] User stand, user was sitting for %llu\n", duration / 1000000);
+        //printf("[STATE] User stand, user was sitting for %llu\n", duration / 1000000);
+        pwm_set_gpio_level(BUZZER, 0);
         return duration / 1000000;
+        
     }
 
     if(sensor_act && !user_is_sitting) {  //second case, if user was standing and now sitted
         user_is_sitting = true; //updating state
         start_time = current_time;
         lost_time = 0; //resetting lost time
-        printf("[STATE] User sitted\n");
+        //printf("[STATE] User sitted\n");
         return 0;
     }
 
     if(sensor_act) { //if user is in range
         lost_time = 0; //resetting lost time
-        printf("[INFO] User is still sitting, distance is %.1f cm\n", distance_cm);
+        //printf("[INFO] User is still sitting, distance is %.1f cm\n", distance_cm);
     }
     // if user is sitting more or equal than user stated in settings
     if(user_is_sitting && current_time - start_time >= target_time) {
         user_is_sitting = false; 
         uint64_t duration = current_time - start_time;
-        printf("[STATE] Target time was reached! User was sitting for %llu seconds\n", duration / 1000000);
         return duration / 1000000;
     }
     return 0;
@@ -80,6 +116,10 @@ int main(void) {
 
     gpio_init(ECHO);
     gpio_set_dir(ECHO, GPIO_IN);
+
+    gpio_set_function(BUZZER, GPIO_FUNC_PWM);
+    uint slice = pwm_gpio_to_slice_num(BUZZER);
+    pwm_set_enabled(slice, true);
            char buf[100];
            bool started = false;
            uint64_t target_time = 0;
@@ -106,18 +146,18 @@ int main(void) {
                 }
             }
             buf[pos] = '\0';
-            target_time = 1000000 * (uint64_t) atoi(buf);
+            target_time = 1000000 * 60* (uint64_t) atoi(buf);
             fflush(stdout);
             printf("%s\n", buf);
             continue;
         } 
     }
         fflush(stdout);
-        printf("%s\n", buf[0] == 'D' ? "DHT sensor is not responding":  buf);
+        printf("%s\n",buf);
             uint64_t time_user_sit = time_user_is_sitting(target_time);
         if(time_user_sit > 0) {
-        printf("User is sitting for %llu seconds\n", time_user_sit);
-        
+        printf("[STATE] It's time for walking, user was sitting for %llu seconds\n", time_user_sit);
+        music();
 
         }
 

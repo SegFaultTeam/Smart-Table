@@ -3769,6 +3769,7 @@ CMakeFiles/pico2.dir/pico2_main.c.o: /home/karl/Desktop/projects/C/Embedded_proj
   /home/karl/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/io_bank0.h \
   /home/karl/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/m0plus.h \
   /home/karl/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/pads_bank0.h \
+  /home/karl/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/pwm.h \
   /home/karl/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/resets.h \
   /home/karl/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/sio.h \
   /home/karl/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/timer.h \
@@ -3778,6 +3779,7 @@ CMakeFiles/pico2.dir/pico2_main.c.o: /home/karl/Desktop/projects/C/Embedded_proj
   /home/karl/pico/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/m0plus.h \
   /home/karl/pico/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/nvic.h \
   /home/karl/pico/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/pads_bank0.h \
+  /home/karl/pico/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/pwm.h \
   /home/karl/pico/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/resets.h \
   /home/karl/pico/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/scb.h \
   /home/karl/pico/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/sio.h \
@@ -3789,6 +3791,7 @@ CMakeFiles/pico2.dir/pico2_main.c.o: /home/karl/Desktop/projects/C/Embedded_proj
   /home/karl/pico/pico-sdk/src/rp2_common/hardware_base/include/hardware/address_mapped.h \
   /home/karl/pico/pico-sdk/src/rp2_common/hardware_gpio/include/hardware/gpio.h \
   /home/karl/pico/pico-sdk/src/rp2_common/hardware_irq/include/hardware/irq.h \
+  /home/karl/pico/pico-sdk/src/rp2_common/hardware_pwm/include/hardware/pwm.h \
   /home/karl/pico/pico-sdk/src/rp2_common/hardware_resets/include/hardware/resets.h \
   /home/karl/pico/pico-sdk/src/rp2_common/hardware_timer/include/hardware/timer.h \
   /home/karl/pico/pico-sdk/src/rp2_common/hardware_uart/include/hardware/uart.h \
@@ -3829,6 +3832,10 @@ CMakeFiles/pico2.dir/pico2_main.c.o: /home/karl/Desktop/projects/C/Embedded_proj
   /usr/lib/gcc/arm-none-eabi/14.2.0/include/stddef.h \
   /usr/lib/gcc/arm-none-eabi/14.2.0/include/stdint.h
 
+
+/home/karl/pico/pico-sdk/src/rp2_common/hardware_pwm/include/hardware/pwm.h:
+
+/home/karl/pico/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/pwm.h:
 
 /home/karl/Desktop/projects/C/Embedded_project/Smart-Table/pico2/pico2_main.c:
 
@@ -4299,6 +4306,8 @@ generated/pico_base/pico/config_autogen.h:
 /home/karl/pico/pico-sdk/src/rp2_common/hardware_flash/include/hardware/flash.h:
 
 /home/karl/pico/pico-sdk/src/rp2_common/pico_bootrom/include/pico/bootrom.h:
+
+/home/karl/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/pwm.h:
 
 /home/karl/pico/pico-sdk/src/rp2_common/pico_bootrom/include/pico/bootrom/lock.h:
 

@@ -75,4 +75,8 @@ CMakeFiles/pico2.dir/pico2_main.c.o: \
  /usr/arm-none-eabi/include/sys/string.h \
  /usr/arm-none-eabi/include/stdlib.h \
  /usr/arm-none-eabi/include/machine/stdlib.h \
- /usr/arm-none-eabi/include/alloca.h /usr/arm-none-eabi/include/ctype.h
+ /usr/arm-none-eabi/include/alloca.h \
+ /home/karl/pico/pico-sdk/src/rp2_common/hardware_pwm/include/hardware/pwm.h \
+ /home/karl/pico/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/pwm.h \
+ /home/karl/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/pwm.h \
+ /usr/arm-none-eabi/include/ctype.h
