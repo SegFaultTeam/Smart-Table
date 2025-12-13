@@ -29,7 +29,8 @@ make
 
 For this project you will need:
 
-DHT sensor
+## DHT sensor
+![DHT](DHT_CONNECTION.png)
 
 - Display
 
