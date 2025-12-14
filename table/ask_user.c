@@ -103,7 +103,7 @@ bool num_checkerm(const char *nbuf){
         if(i>2) return false;
     }
     int x = atoi(nbuf);
-    if(x > 360 || x < 5) return false;
+    if(x > 360 || x < 2) return false;
     return true;
 }
 
