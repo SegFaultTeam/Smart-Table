@@ -109,7 +109,7 @@ bool num_checkerm(const char *nbuf){
 
 char *frequence_of_moving(){
     printf("\nHow often do you need to be reminded to move?\n");
-    printf("Please write in minutes between 5 and 360 minutes:");
+    printf("Please write in minutes between 2 and 360 minutes:");
     char *nbuf = read_string();
     bool check = num_checkerm(nbuf);
     while(!check){
@@ -117,7 +117,7 @@ char *frequence_of_moving(){
         nbuf = NULL;
         printf("\nYour input was incorrect\n");
         printf("How often do you need to be reminded to move?\n");
-        printf("Please write in minutes between 5 and 360 minutes:");
+        printf("Please write in minutes between 2 and 360 minutes:");
         nbuf = read_string();
         check = num_checkerm(nbuf);
     }
