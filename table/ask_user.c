@@ -103,13 +103,13 @@ bool num_checkerm(const char *nbuf){
         if(i>2) return false;
     }
     int x = atoi(nbuf);
-    if(x > 360 || x < 5) return false;
+    if(x > 360 || x < 1) return false;
     return true;
 }
 
 char *frequence_of_moving(){
     printf("\nHow often do you need to be reminded to move?\n");
-    printf("Please write in minutes between 5 and 360 minutes:");
+    printf("Please write in minutes between 1 and 360 minutes:");
     char *nbuf = read_string();
     bool check = num_checkerm(nbuf);
     while(!check){
@@ -117,7 +117,7 @@ char *frequence_of_moving(){
         nbuf = NULL;
         printf("\nYour input was incorrect\n");
         printf("How often do you need to be reminded to move?\n");
-        printf("Please write in minutes between 5 and 360 minutes:");
+        printf("Please write in minutes between 1 and 360 minutes:");
         nbuf = read_string();
         check = num_checkerm(nbuf);
     }

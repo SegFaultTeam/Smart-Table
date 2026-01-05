@@ -68,14 +68,14 @@ uint64_t time_user_is_sitting(uint64_t target_time) { //function that returns ti
     if(!sensor_act && user_is_sitting) {  //first case
         if(lost_time == 0) lost_time = current_time; //updating lost time
         if(current_time - lost_time < 100000) { //giving 0.5s as temporary lost signal, if user returns in range, time will not stop
-            //printf("[INFO] Temporary lost signal, ignoring\n");
+            printf("[INFO] Temporary lost signal, ignoring\n");
             return 0;
         }
 
         user_is_sitting = false;
         uint64_t duration = current_time - start_time;  //calculating duration
         lost_time = 0; //updating lost time
-        //printf("[STATE] User stand, user was sitting for %llu\n", duration / 1000000);
+        printf("[STATE] User stand, user was sitting for %llu\n", duration / 1000000);
         pwm_set_gpio_level(BUZZER, 0);
         return duration / 1000000;
         
@@ -85,13 +85,13 @@ uint64_t time_user_is_sitting(uint64_t target_time) { //function that returns ti
         user_is_sitting = true; //updating state
         start_time = current_time;
         lost_time = 0; //resetting lost time
-        //printf("[STATE] User sitted\n");
+        printf("[STATE] User sitted\n");
         return 0;
     }
 
     if(sensor_act) { //if user is in range
         lost_time = 0; //resetting lost time
-        //printf("[INFO] User is still sitting, distance is %.1f cm\n", distance_cm);
+        printf("[INFO] User is still sitting, distance is %.1f cm\n", distance_cm);
     }
     // if user is sitting more or equal than user stated in settings
     if(user_is_sitting && current_time - start_time >= target_time) {

@@ -53,8 +53,6 @@ parser.on("data", (msg) => {
         const hasFloat = /-?\d+\.\d+/.test(data);
         if(hasFloat) return;
         const match = data.match(/-?\b\d+\b/);
-        const number = match ? Number(match[0]) : 0;
-        if(number < time / 1000 / 60) return;
     bot.sendMessage(chatID,data === "D" ? "DHT sensor is not responding" : data === "B" ? "DHT_RESULT_BAD_CHECKSUM" : data);
     }
 });
