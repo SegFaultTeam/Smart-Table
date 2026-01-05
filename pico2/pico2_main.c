@@ -155,7 +155,7 @@ int main(void) {
         fflush(stdout);
         printf("%s\n",buf);
             uint64_t time_user_sit = time_user_is_sitting(target_time);
-        if(time_user_sit > 0) {
+        if(time_user_sit >= target_time / 1000000) {
         printf("[STATE] It's time for walking, user was sitting for %llu seconds\n", time_user_sit);
         music();
 
