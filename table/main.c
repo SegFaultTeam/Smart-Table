@@ -10,11 +10,11 @@
 #include <string.h>
 #include "ssd1306.h"
 #include "hardware/i2c.h"
-
+#define hz 400000
 ssd1306_t disp;
 
 void setup_gpios(void) { // initialing pins for I2c
-    i2c_init(i2c1, 400000);
+    i2c_init(i2c1, hz);
     gpio_set_function(2, GPIO_FUNC_I2C);
     gpio_set_function(3, GPIO_FUNC_I2C);
     gpio_pull_up(2);
@@ -27,13 +27,11 @@ void display_status(float temp, float hum, int fan_percent) {
     
     ssd1306_clear(&disp);
     
-    sprintf(buf, "Temp:%.1fC", temp);
+    snprintf(buf, sizeof(buf), "Temp: %.1fC", temp);
     ssd1306_draw_string(&disp, 5, 5, 1, buf);
-    
-    sprintf(buf, "Hum :%.1f%%", hum);
+    snprintf(buf, sizeof(buf), "Hum : %.1f%%", hum);
     ssd1306_draw_string(&disp, 5, 20, 1, buf);
-    
-    sprintf(buf, "Fan :%d%%", fan_percent);
+    snprintf(buf, sizeof(buf), "Fan : %d%%", fan_percent);
     ssd1306_draw_string(&disp, 5, 35, 1, buf);
 
     ssd1306_show(&disp);
@@ -163,7 +161,6 @@ int main() {
             ssd1306_draw_string(&disp, 5, 10, 1, "Bad Checksum.");
             ssd1306_show(&disp);
         }
-        
         sleep_ms(2000);
     }
 }
